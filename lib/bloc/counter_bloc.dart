@@ -18,7 +18,7 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
   }
 
   void _onDecrement(DecrementCounter event, Emitter<CounterState> emit) {
-    emit(state.copyWith(count: (state.count - 3000).clamp(1000, double.infinity).toInt()));
+    emit(state.copyWith(count: (state.count - 3000).clamp(0, double.infinity).toInt()));
   }
 
   Timer? _autoDecrementTimer;
