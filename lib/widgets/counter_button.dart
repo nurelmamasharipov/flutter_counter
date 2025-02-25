@@ -32,7 +32,7 @@ class _CounterButtonState extends State<CounterButton> {
   void _startResetTimer(BuildContext context) {
     _resetTimer?.cancel();
     _resetTimer = Timer(Duration(seconds: 3), () {
-      context.read<CounterBloc>().add(ResetCounter());
+      context.read<CounterBloc>().add(DecrementCounter());
     });
   }
 
