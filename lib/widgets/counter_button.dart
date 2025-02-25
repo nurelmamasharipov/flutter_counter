@@ -1,7 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../bloc/counter_bloc.dart';
 import '../bloc/counter_event.dart';
 
@@ -11,48 +11,42 @@ class CounterButton extends StatefulWidget {
 }
 
 class _CounterButtonState extends State<CounterButton> {
-  Timer? _timer;
+  Timer? _incrementTimer;
+  Timer? _resetTimer;
   bool _isPressed = false;
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _incrementTimer?.cancel();
+    _resetTimer?.cancel();
     super.dispose();
   }
 
-  void _startTimer(BuildContext context) {
-    _timer = Timer(Duration(seconds: 3), () {
-      if (!_isPressed) {
-        context.read<CounterBloc>().add(ResetCounter());
-      }
+  void _startIncrement(BuildContext context) {
+    _incrementTimer?.cancel();
+    _incrementTimer = Timer.periodic(Duration(milliseconds: 500), (_) {
+      context.read<CounterBloc>().add(IncrementCounter());
     });
   }
 
-  void _incrementCounter(BuildContext context) {
-    context.read<CounterBloc>().add(IncrementCounter());
+  void _startResetTimer(BuildContext context) {
+    _resetTimer?.cancel();
+    _resetTimer = Timer(Duration(seconds: 3), () {
+      context.read<CounterBloc>().add(ResetCounter());
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (_) {
-        setState(() {
-          _isPressed = true;
-        });
-        _incrementCounter(context);
-        _startTimer(context);
+      onLongPressStart: (_) {
+        setState(() => _isPressed = true);
+        _startIncrement(context);
       },
-      onTapUp: (_) {
-        setState(() {
-          _isPressed = false;
-        });
-        _timer?.cancel();
-      },
-      onTapCancel: () {
-        setState(() {
-          _isPressed = false;
-        });
-        _timer?.cancel();
+      onLongPressEnd: (_) {
+        setState(() => _isPressed = false);
+        _incrementTimer?.cancel();
+        _startResetTimer(context);
       },
       child: Container(
         padding: EdgeInsets.all(20),

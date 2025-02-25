@@ -1,19 +1,19 @@
-import 'dart:async';
 import 'package:bloc/bloc.dart';
+
 import 'counter_event.dart';
 import 'counter_state.dart';
 
 class CounterBloc extends Bloc<CounterEvent, CounterState> {
-  CounterBloc() : super(CounterState(count: 1000)) {
+  CounterBloc() : super(const CounterState(count: 1000)) {
     on<IncrementCounter>(_onIncrement);
-    on<ResetCounter>(_onReset);
+    on<DecrementCounter>(_onDecrement);
   }
 
   void _onIncrement(IncrementCounter event, Emitter<CounterState> emit) {
-    emit(state.copyWith(count: state.count + 1));
+    emit(state.copyWith(count: state.count + 500));
   }
 
-  void _onReset(ResetCounter event, Emitter<CounterState> emit) {
-    emit(state.copyWith(count: 1000));
+  void _onDecrement(DecrementCounter event, Emitter<CounterState> emit) {
+    emit(state.copyWith(count: (state.count - 3000).clamp(1000, double.infinity).toInt()));
   }
 }
