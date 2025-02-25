@@ -12,13 +12,11 @@ class CounterButton extends StatefulWidget {
 
 class _CounterButtonState extends State<CounterButton> {
   Timer? _incrementTimer;
-  Timer? _resetTimer;
   bool _isPressed = false;
 
   @override
   void dispose() {
     _incrementTimer?.cancel();
-    _resetTimer?.cancel();
     super.dispose();
   }
 
@@ -29,24 +27,18 @@ class _CounterButtonState extends State<CounterButton> {
     });
   }
 
-  void _startResetTimer(BuildContext context) {
-    _resetTimer?.cancel();
-    _resetTimer = Timer(Duration(seconds: 3), () {
-      context.read<CounterBloc>().add(DecrementCounter());
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPressStart: (_) {
         setState(() => _isPressed = true);
+        context.read<CounterBloc>().add(StopAutoDecrement());
         _startIncrement(context);
       },
       onLongPressEnd: (_) {
         setState(() => _isPressed = false);
         _incrementTimer?.cancel();
-        _startResetTimer(context);
+        context.read<CounterBloc>().add(StartAutoDecrement());
       },
       child: Container(
         padding: EdgeInsets.all(20),
